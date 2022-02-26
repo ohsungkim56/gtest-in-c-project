@@ -1,2 +1,2 @@
 
-include test/api/module.mk
+include test/NW_interface/module.mk

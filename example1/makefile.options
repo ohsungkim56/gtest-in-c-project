@@ -7,3 +7,6 @@ LD_FLAGS= -lgtest -lgtest_main -lgmock -lgmock_main -lpthread
 LCOV_FLAGS= -fprofile-arcs -ftest-coverage -g 
 
 BUILD_OUTPUT_PATH=$(BASE_PATH)/build
+OBJECT_PATH=$(BUILD_OUTPUT_PATH)/obj
+BINARY_PATH=$(BUILD_OUTPUT_PATH)/bin
+LIB_PATH=$(BUILD_OUTPUT_PATH)/lib

@@ -1,7 +1,7 @@
 
 #include "gmock/gmock.h"
 
-#include "../../api/src/api.cpp"
+#include "nw_interface.cpp"
 
 using ::testing::_;
 using ::testing::Return;
@@ -11,6 +11,9 @@ class MyMock{
 public:
 	MOCK_METHOD(int, conn, (const char* addr));
 	MOCK_METHOD(bool, disconn, (int fd));
+	MOCK_METHOD(bool, isValid, (int));
+	MOCK_METHOD(int, write, (int fd, char* data));
+	MOCK_METHOD(int, read, (int fd, char* data));
 };
 
 MyMock* mock;
@@ -21,6 +24,18 @@ int conn(const char* addr){
 
 bool disconn(int fd){
 	return mock->disconn(fd);
+}
+
+bool isValid(int fd){
+	return mock->isValid(fd);
+}
+
+int write(int fd, char* data){
+	return mock->write(fd, data);
+}
+
+int read(int fd, char* data){
+	return mock->read(fd,data);
 }
 
 TEST(API_TEST, API_TEST_1){

@@ -3,27 +3,36 @@
 
 .PHONY : .READY test
 
-include module.options
+include makefile.options
 
-all : .READY APP EXTERNAL_API API
-	$(info [*]Linking start)
-	g++ -o $(BUILD_OUTPUT_PATH)/app $(BUILD_OUTPUT_PATH)/main.o $(BUILD_OUTPUT_PATH)/api.o $(BUILD_OUTPUT_PATH)/external_api.o $(LDFLAG)
+all : .READY APP EXTERNAL_NW_API_LIB NW_INTERFACE
+	$(info [*]Linking)
+	g++ -o $(BINARY_PATH)/app $(OBJECT_PATH)/main.o $(OBJECT_PATH)/nw_interface.o $(LIB_PATH)/libEXTERNAL_NW_API.a $(LDFLAG)
 
 .READY:
 	@if [ ! -d $(BUILD_OUTPUT_PATH) ]; then mkdir $(BUILD_OUTPUT_PATH); fi
+	@if [ ! -d $(LIB_PATH) ]; then mkdir $(LIB_PATH); fi
+	@if [ ! -d $(OBJECT_PATH) ]; then mkdir $(OBJECT_PATH); fi
+	@if [ ! -d $(BINARY_PATH) ]; then mkdir $(BINARY_PATH); fi
 
-test : API_TEST
-	g++ -o $(BUILD_OUTPUT_PATH)/api_test $(BUILD_OUTPUT_PATH)/api_test.o $(LD_FLAGS) $(LCOV_FLAGS)
-	$(BUILD_OUTPUT_PATH)/api_test
-	lcov --capture --directory ./ --output-file $(BUILD_OUTPUT_PATH)/api_test.info
-	lcov -o $(BUILD_OUTPUT_PATH)/api_test.info --remove $(BUILD_OUTPUT_PATH)/api_test.info \
+test : .READY NW_INTERFACE_TEST
+	$(info [*] make test binary)
+	g++ -o $(BINARY_PATH)/nw_interface_test $(OBJECT_PATH)/nw_interface_test.o $(LD_FLAGS) $(LCOV_FLAGS)
+	$(info [*] run test bin)
+	$(BINARY_PATH)/nw_interface_test
+	$(info [*] run lcov)
+	lcov --capture --directory ./ --output-file $(BUILD_OUTPUT_PATH)/nw_interface_test.info
+	lcov -o $(BUILD_OUTPUT_PATH)/nw_interface_test.info --remove $(BUILD_OUTPUT_PATH)/nw_interface_test.info \
 		'/usr/*' \
 		'*/test/*'
-	genhtml $(BUILD_OUTPUT_PATH)/api_test.info --output-directory $(BUILD_OUTPUT_PATH)/lcov_out
+	genhtml $(BUILD_OUTPUT_PATH)/nw_interface_test.info --output-directory $(BUILD_OUTPUT_PATH)/lcov_out
 clean :
-	@rm -rf $(BUILD_OUTPUT_PATH)/*
+	@rm -rf $(BUILD_OUTPUT_PATH)
+
+touch :
+	find -name "*.cpp" -exec touch {} \;
 
 include app/module.mk
-include api/module.mk
-include external_api/module.mk
+include NW_interface/module.mk
+include EXTERNAL_NW_API/module.mk
 include test/module.mk

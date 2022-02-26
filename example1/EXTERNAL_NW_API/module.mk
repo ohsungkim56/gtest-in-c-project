@@ -1,0 +1,18 @@
+
+MODULE_NAME:=EXTERNAL_NW_API
+$(MODULE_NAME)_PATH=$(BASE_PATH)/EXTERNAL_NW_API
+
+SRCS = external_nw_api.cpp 
+
+$(MODULE_NAME)_SRC_PATH=$($(MODULE_NAME)_PATH)/src/
+$(MODULE_NAME)_INC_PATH=$($(MODULE_NAME)_PATH)/inc/
+
+$(MODULE_NAME)_LIB := lib$(MODULE_NAME).a
+
+$(MODULE_NAME)_LIB : MODULE_NAME:=$(MODULE_NAME)
+
+$(MODULE_NAME)_LIB : $(addprefix $($(MODULE_NAME)_SRC_PATH), $(SRCS))
+	$(info [*] making static lib $(MODULE_NAME))
+	g++ $(addprefix -I, $($(MODULE_NAME)_INC_PATH)) -c $< -o $(OBJECT_PATH)/$(MODULE_NAME).o
+	ar rcsv $(LIB_PATH)/$($@) $(OBJECT_PATH)/$(MODULE_NAME).o
+
